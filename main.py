@@ -7,7 +7,21 @@ withholds — who, or what, is breathing in that bed now. The script
 validates the line and drops it into /output/entry.txt.
 """
 
+import re
 from pathlib import Path
+
+# Abbreviations whose periods are not sentence ends: "3 a.m." or
+# "Dr. Smith" must not be mistaken for a second sentence.
+ABBREVIATIONS = ("a.m.", "p.m.", "Dr.", "Mr.", "Mrs.", "Ms.", "St.", "e.g.", "i.e.")
+
+
+def _strip_abbreviations(text: str) -> str:
+    """Drop the periods of known abbreviations so they are not read
+    as sentence ends."""
+    out = text
+    for abbr in ABBREVIATIONS:
+        out = out.replace(abbr, abbr.replace(".", ""))
+    return out
 
 # The line itself: one sentence, 135 characters.
 LINE = (
@@ -33,8 +47,8 @@ def validate(line: str) -> str:
         raise ValueError("line must be a single line")
     if not text.endswith("."):
         raise ValueError("line must end with a full stop")
-    if ". " in text:
-        raise ValueError("line must be a single sentence (no '. ' inside)")
+    if re.search(r"\.\s+[A-Z]", _strip_abbreviations(text)):
+        raise ValueError("line must be a single sentence")
     return text
 
 

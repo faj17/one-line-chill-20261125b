@@ -31,6 +31,16 @@ Revision pass: no better line emerged; A kept as drafted. One wording considered
 and rejected: ending "...kept breathing until sunrise" — softer last word than
 "never stopped breathing".
 
+Second revision pass (2026-11-25, thinking_revised): the entry line is unchanged —
+A still wins on the same reasoning — but `validate()` was genuinely improved. The
+old check (`". " in text`) falsely rejected any line containing an abbreviation
+such as "Dr. Smith" or a time like "3 a.m." written mid-sentence. `validate()` now
+strips the periods of known abbreviations ("a.m.", "p.m.", "Dr.", "Mr.", "Mrs.",
+"Ms.", "St.", "e.g.", "i.e.") before testing for a sentence break, and a break is
+only a period followed by whitespace and a capital letter. The shipped line still
+validates (its "3 a.m." is an abbreviation, its only true sentence end is the
+final full stop), and a two-sentence line still fails.
+
 ## Rubric self-score (0/1 each)
 
 | Criterion | Score | Note |
